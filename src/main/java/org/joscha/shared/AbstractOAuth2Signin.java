@@ -1,16 +1,15 @@
 package org.joscha.shared;
 
 import com.github.scribejava.core.builder.ServiceBuilder;
-import com.github.scribejava.core.builder.api.BaseApi;
+import com.github.scribejava.core.builder.api.DefaultApi20;
 import com.github.scribejava.core.model.OAuthRequest;
 import com.github.scribejava.core.model.Response;
 import com.github.scribejava.core.model.Verb;
 import com.github.scribejava.core.oauth.OAuth20Service;
 import com.vaadin.flow.component.AttachEvent;
-import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.Tag;
+import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.dependency.HtmlImport;
-import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.polymertemplate.Id;
 
 import java.io.IOException;
@@ -31,17 +30,17 @@ public abstract class AbstractOAuth2Signin<USER, SCOPE> extends AbstractSignin<U
     private final OAuth20Service oAuth20Service;
     private final String requestUrl;
 
-    @Id("cont")
-    private Div div;
+    @Id("signin-button")
+    private Button signinButton;
 
     @SafeVarargs
-    protected AbstractOAuth2Signin(Class<USER> userClass, String requestUrl, String clientId, String apiSecret, String providerId, BaseApi<OAuth20Service> baseApi, String redirectUri, String authorization, SCOPE... scopes) {
+    protected AbstractOAuth2Signin(Class<USER> userClass, String requestUrl, String clientId, String apiSecret, String providerId, DefaultApi20 defaultApi20, String redirectUri, String authorization, SCOPE... scopes) {
         super(userClass);
 
         requireNonNull(requestUrl);
         requireNonNull(clientId);
         requireNonNull(clientId);
-        requireNonNull(baseApi);
+        requireNonNull(defaultApi20);
         requireNonNull(apiSecret);
         requireNonNull(providerId);
         requireNonNull(redirectUri);
@@ -53,11 +52,11 @@ public abstract class AbstractOAuth2Signin<USER, SCOPE> extends AbstractSignin<U
         optionalScopeCollector()
                 .map(c -> stream(scopes).map(Object::toString).collect(c))
                 .filter(s -> !s.isEmpty())
-                .ifPresent(serviceBuilder::scope);
+                .ifPresent(serviceBuilder::withScope);
 
         this.requestUrl = configureUrl(requestUrl, scopes);
 
-        this.oAuth20Service = configureServiceBuilder(serviceBuilder).build(baseApi);
+        this.oAuth20Service = configureServiceBuilder(serviceBuilder).build(defaultApi20);
 
         addListener(AccessTokenReceivedEvent.class, e -> onAccessTokenReceived(e.getAccessToken()));
 
@@ -72,11 +71,11 @@ public abstract class AbstractOAuth2Signin<USER, SCOPE> extends AbstractSignin<U
     }
 
     /**
-     * A collector to concatenate the scopes for {@link ServiceBuilder#scope(String)}
+     * A collector to concatenate the scopes for {@link ServiceBuilder#withScope(String)}
      *
-     * @return {@link Optional#empty()} if setting {@link ServiceBuilder#scope(String)} is not
-     * necessary for the chosen {@link BaseApi}, otherwise an {@link Optional} containing {@link
-     * Collector} to concatenate {@link SCOPE}s as expected with this {@link BaseApi}.
+     * @return {@link Optional#empty()} if setting {@link ServiceBuilder#withScope(String)} is not
+     * necessary for the chosen {@link DefaultApi20}, otherwise an {@link Optional} containing {@link
+     * Collector} to concatenate {@link SCOPE}s as expected with this {@link DefaultApi20}.
      */
     protected Optional<Collector<CharSequence, ?, String>> optionalScopeCollector() {
         return Optional.empty();
@@ -108,10 +107,10 @@ public abstract class AbstractOAuth2Signin<USER, SCOPE> extends AbstractSignin<U
     @Override
     protected void onAttach(AttachEvent attachEvent) {
         super.onAttach(attachEvent);
-        div.add(createComponent());
+        configureButton(signinButton);
     }
 
-    protected abstract Component createComponent();
+    protected abstract void configureButton(Button button);
 
     private void onAccessTokenReceived(String accessToken) {
         requireNonNull(accessToken);
