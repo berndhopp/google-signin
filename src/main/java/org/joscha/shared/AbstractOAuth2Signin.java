@@ -9,7 +9,7 @@ import com.github.scribejava.core.oauth.OAuth20Service;
 import com.vaadin.flow.component.AttachEvent;
 import com.vaadin.flow.component.Tag;
 import com.vaadin.flow.component.button.Button;
-import com.vaadin.flow.component.dependency.HtmlImport;
+import com.vaadin.flow.component.dependency.JsModule;
 import com.vaadin.flow.component.polymertemplate.Id;
 
 import java.io.IOException;
@@ -24,7 +24,7 @@ import static java.util.Objects.requireNonNull;
 import static java.util.stream.Collectors.toSet;
 
 @Tag("sign-in")
-@HtmlImport("addon/joscha/signin.html")
+@JsModule("./addon/joscha/signin.js")
 public abstract class AbstractOAuth2Signin<USER, SCOPE> extends AbstractSignin<USER> {
 
     private final OAuth20Service oAuth20Service;

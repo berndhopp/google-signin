@@ -4,17 +4,17 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.vaadin.addon</groupId>
     <artifactId>joscha</artifactId>
-    <version>1.0.0-B2</version>
+    <version>1.0.0-vaadin14</version>
     <name>OAuth-Login components</name>
-    <description>Integration of OAuth for Vaadin 10+</description>
+    <description>Integration of OAuth for Vaadin 14+</description>
     <properties>
-        <vaadin.version>[10.0.0,)</vaadin.version>
+        <vaadin.version>14.1.5</vaadin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <gson.version>2.8.5</gson.version>
-        <scribejava-apis.version>6.5.1</scribejava-apis.version>
+        <gson.version>2.8.6</gson.version>
+        <scribejava-apis.version>6.9.0</scribejava-apis.version>
     </properties>
     <organization>
         <name>Bernd Hopp</name>
@@ -45,7 +45,6 @@
             <groupId>com.vaadin</groupId>
             <artifactId>vaadin-core</artifactId>
             <version>${vaadin.version}</version>
-            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -68,6 +67,18 @@
             </resource>
         </resources>
         <plugins>
+            <plugin>
+                <groupId>com.vaadin</groupId>
+                <artifactId>vaadin-maven-plugin</artifactId>
+                <version>${vaadin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>prepare-frontend</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-jar-plugin</artifactId>
